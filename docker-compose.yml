@@ -1,0 +1,101 @@
+services:
+  load-balancer:
+    build:
+      context: .
+      dockerfile: load-balancer/Dockerfile
+    container_name: load-balancer
+    ports:
+      - "8080:8080"
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+      - SERVER_PORT=8080
+      - MANAGEMENT_ENDPOINTS_WEB_EXPOSURE_INCLUDE=health,info,metrics
+      - MANAGEMENT_ENDPOINT_HEALTH_SHOW_DETAILS=always
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:8080/actuator/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    networks:
+      - app-network
+    restart: unless-stopped
+
+  api-service-1:
+    build:
+      context: .
+      dockerfile: api-service/Dockerfile
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+      - SERVER_PORT=8081
+      - LOADBALANCER_URL=http://load-balancer:8080
+    depends_on:
+      load-balancer:
+        condition: service_healthy
+    networks:
+      - app-network
+    restart: unless-stopped
+
+  api-service-2:
+    build:
+      context: .
+      dockerfile: api-service/Dockerfile
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+      - SERVER_PORT=8082
+      - LOADBALANCER_URL=http://load-balancer:8080
+    depends_on:
+      load-balancer:
+        condition: service_healthy
+    networks:
+      - app-network
+    restart: unless-stopped
+
+  api-service-3:
+    build:
+      context: .
+      dockerfile: api-service/Dockerfile
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+      - SERVER_PORT=8083
+      - LOADBALANCER_URL=http://load-balancer:8080
+    depends_on:
+      load-balancer:
+        condition: service_healthy
+    networks:
+      - app-network
+    restart: unless-stopped
+
+  api-service-4:
+    build:
+      context: .
+      dockerfile: api-service/Dockerfile
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+      - SERVER_PORT=8084
+      - LOADBALANCER_URL=http://load-balancer:8080
+    depends_on:
+      load-balancer:
+        condition: service_healthy
+    networks:
+      - app-network
+    restart: unless-stopped
+
+  api-service-5:
+    build:
+      context: .
+      dockerfile: api-service/Dockerfile
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+      - SERVER_PORT=8085
+      - LOADBALANCER_URL=http://load-balancer:8080
+    depends_on:
+      load-balancer:
+        condition: service_healthy
+    networks:
+      - app-network
+    restart: unless-stopped
+
+networks:
+  app-network:
+    driver: bridge
