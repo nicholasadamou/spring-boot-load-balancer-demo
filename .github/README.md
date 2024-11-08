@@ -87,8 +87,8 @@ graph TB
 
 ```
 .
-├── api-service/               # API service module
-├── common/                   # Shared DTOs and utilities
+├── api-service/             # API service module
+├── common/                  # Shared DTOs and utilities
 ├── load-balancer/           # Load balancer core module
 ├── docker-compose.yml       # Docker composition
 └── pom.xml                  # Parent POM file
